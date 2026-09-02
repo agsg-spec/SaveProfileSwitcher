@@ -17,44 +17,7 @@ public partial class AddProfileDialog : Window
         InitializeComponent();
     }
 
-    private void DisplayNameTextBox_TextChanged(
-        object sender,
-        System.Windows.Controls.TextChangedEventArgs e)
-    {
-        CreateButton.IsEnabled = !string.IsNullOrWhiteSpace(DisplayNameTextBox.Text);
-    }
-
-    private void BrowseAvatar_Click(object sender, RoutedEventArgs e)
-    {
-        var dialog = new OpenFileDialog
-        {
-            Filter = "Image Files|*.png;*.jpg;*.jpeg;*.webp;*.ico|All Files|*.*"
-        };
-
-        if (dialog.ShowDialog(this) == true)
-        {
-            AvatarPathTextBox.Text = dialog.FileName;
-        }
-    }
-
-    private void Create_Click(object sender, RoutedEventArgs e)
-    {
-        Guid id = Guid.NewGuid();
-
-        CreatedProfile = new UserProfile
-        {
-            Id = id,
-            DisplayName = DisplayNameTextBox.Text.Trim(),
-            AvatarPath = string.IsNullOrWhiteSpace(AvatarPathTextBox.Text)
-                ? null
-                : AvatarPathTextBox.Text.Trim(),
-            StorageRootPath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                "SaveProfileSwitcher",
-                "Profiles",
-                id.ToString())
-        };
-
-        DialogResult = true;
-    }
+    private void DisplayNameTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) => CreateButton.IsEnabled = !string.IsNullOrWhiteSpace(DisplayNameTextBox.Text);
+    private void BrowseAvatar_Click(object sender, RoutedEventArgs e) { var dialog = new OpenFileDialog { Filter = "Image Files|*.png;*.jpg;*.jpeg;*.webp;*.ico|All Files|*.*" }; if (dialog.ShowDialog(this) == true) AvatarPathTextBox.Text = dialog.FileName; }
+    private void Create_Click(object sender, RoutedEventArgs e) { Guid id = Guid.NewGuid(); CreatedProfile = new UserProfile { Id = id, DisplayName = DisplayNameTextBox.Text.Trim(), AvatarPath = string.IsNullOrWhiteSpace(AvatarPathTextBox.Text) ? null : AvatarPathTextBox.Text.Trim(), StorageRootPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SaveProfileSwitcher", "Profiles", id.ToString()) }; DialogResult = true; }
 }
