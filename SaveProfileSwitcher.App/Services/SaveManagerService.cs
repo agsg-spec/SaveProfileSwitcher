@@ -14,7 +14,7 @@ public sealed class SaveManagerService
         var titleSaveDir = emulator.GetTitleSaveDirectory(game.EmulatorConfig);
         if (string.IsNullOrEmpty(titleSaveDir))
         {
-            _logger.LogError("Title save directory not resolved for " + game.GameName);
+            _logger.LogError("Title save directory not resolved for " + game.GameName, null);
             return;
         }
 
