@@ -18,19 +18,9 @@ public partial class MainWindow : Window
     private void AddProfile_Click(object sender, RoutedEventArgs e)
     {
         var dialog = new AddProfileDialog { Owner = this };
-        if (dialog.ShowDialog() == true &&
-            !string.IsNullOrWhiteSpace(dialog.DisplayName))
+        if (dialog.ShowDialog() == true && DataContext is MainViewModel vm)
         {
-            var newProfile = new UserProfile
-            {
-                Id = Guid.NewGuid(),
-                DisplayName = dialog.DisplayName.Trim()
-            };
-
-            if (DataContext is MainViewModel vm)
-            {
-                vm.AddProfileFromDialog(newProfile);
-            }
+            vm.AddProfileFromDialog(dialog.CreatedProfile);
         }
     }
 
@@ -50,8 +40,7 @@ public partial class MainWindow : Window
 
     private void EditGame_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is not Button button || button.DataContext is not GameConfig selectedGame ||
-            DataContext is not MainViewModel vm)
+        if (sender is not Button button || button.DataContext is not GameConfig selectedGame || DataContext is not MainViewModel vm)
         {
             return;
         }
@@ -66,9 +55,7 @@ public partial class MainWindow : Window
 
     private void QuickSwitch_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is not Button button || button.DataContext is not GameConfig game ||
-            button.Tag is not ComboBox profileSelector ||
-            profileSelector.SelectedItem is not UserProfile profile)
+        if (sender is not Button button || button.DataContext is not GameConfig game || button.Tag is not ComboBox profileSelector || profileSelector.SelectedItem is not UserProfile profile)
         {
             return;
         }
@@ -121,12 +108,10 @@ public partial class MainWindow : Window
 
     private void TransferSave_Click(object sender, RoutedEventArgs e)
     {
-        if (DataContext is not MainViewModel vm || vm.SelectedGame is null || vm.SelectedProfile is null)
+        if (DataContext is MainViewModel vm && vm.SelectedGame is not null && vm.SelectedProfile is not null)
         {
-            return;
+            vm.SwitchProfileForSelectedGameCommand.Execute(null);
         }
-
-        vm.SwitchProfileForSelectedGameCommand.Execute(null);
     }
 
     private void CreateZipBackup_Click(object sender, RoutedEventArgs e)
