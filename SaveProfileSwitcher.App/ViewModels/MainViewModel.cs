@@ -2,15 +2,18 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 using SaveProfileSwitcher.App.Models;
 using SaveProfileSwitcher.App.Services;
+using SaveProfileSwitcher.App.Views;
 
 namespace SaveProfileSwitcher.App.ViewModels;
 
 public sealed class MainViewModel : INotifyPropertyChanged
 {
     private readonly SaveManagerService _saveManager = new();
+    private readonly BackupManagerService _backupManager = new();
     private UserProfile? selectedProfile;
     private GameConfig? selectedGame;
 
@@ -41,11 +44,16 @@ public sealed class MainViewModel : INotifyPropertyChanged
     }
 
     public ICommand SwitchProfileForSelectedGameCommand { get; }
+    public ICommand OpenBackupsCommand { get; }
 
     public MainViewModel()
     {
         SwitchProfileForSelectedGameCommand = new RelayCommand(
             _ => SwitchProfileForSelectedGame(),
+            _ => SelectedProfile != null && SelectedGame != null);
+
+        OpenBackupsCommand = new RelayCommand(
+            _ => OpenBackups(),
             _ => SelectedProfile != null && SelectedGame != null);
 
         var profilesRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SaveProfileSwitcher", "Profiles");
@@ -76,6 +84,16 @@ public sealed class MainViewModel : INotifyPropertyChanged
         {
             LoggerService.Instance.LogError("Failed to switch profile for game.", ex);
         }
+    }
+
+    private void OpenBackups()
+    {
+        if (SelectedProfile == null || SelectedGame == null) return;
+        var dialog = new BackupManagerDialog(SelectedProfile, SelectedGame, _backupManager)
+        {
+            Owner = Application.Current.MainWindow
+        };
+        dialog.ShowDialog();
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
