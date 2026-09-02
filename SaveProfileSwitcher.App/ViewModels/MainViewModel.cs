@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
 using SaveProfileSwitcher.App.Models;
 using SaveProfileSwitcher.App.Services;
 
@@ -9,6 +10,7 @@ namespace SaveProfileSwitcher.App.ViewModels;
 
 public sealed class MainViewModel : INotifyPropertyChanged
 {
+    private readonly SaveManagerService _saveManager = new();
     private UserProfile? selectedProfile;
     private GameConfig? selectedGame;
 
@@ -38,8 +40,14 @@ public sealed class MainViewModel : INotifyPropertyChanged
         }
     }
 
+    public ICommand SwitchProfileForSelectedGameCommand { get; }
+
     public MainViewModel()
     {
+        SwitchProfileForSelectedGameCommand = new RelayCommand(
+            _ => SwitchProfileForSelectedGame(),
+            _ => SelectedProfile != null && SelectedGame != null);
+
         var profilesRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SaveProfileSwitcher", "Profiles");
         Directory.CreateDirectory(profilesRoot);
         var profile = new UserProfile
@@ -51,12 +59,35 @@ public sealed class MainViewModel : INotifyPropertyChanged
         Profiles.Add(profile);
         SelectedProfile = profile;
 
-        Games.Add(new GameConfig { GameId = "AC_ODYSSEY", GameName = "Assassin's Creed Odyssey", DefaultSaveMode = SaveMode.SymlinkOrJunction, EmulatorConfig = new EmulatorConfig { PlatformName = "PC", TitleId = "ACOD", ExecutablePath = "C:/Games/ACOdyssey/ACOdyssey.exe" } });
-        Games.Add(new GameConfig { GameId = "FH5", GameName = "Forza Horizon 5", DefaultSaveMode = SaveMode.MoveAndSwap, EmulatorConfig = new EmulatorConfig { PlatformName = "PC", TitleId = "FH5", ExecutablePath = "C:/Games/FH5/ForzaHorizon5.exe" } });
-        Games.Add(new GameConfig { GameId = "RPCS3_BLUS30109", GameName = "Ninja Gaiden Sigma 2 (RPCS3)", DefaultSaveMode = SaveMode.CopyAndOverwrite, EmulatorConfig = new EmulatorConfig { EmulatorType = EmulatorType.RPCS3, PlatformName = "PlayStation 3", TitleId = "BLUS30109", ExecutablePath = "C:/Emulators/RPCS3/rpcs3.exe" } });
+        Games.Add(new GameConfig { GameId = "AC_ODYSSEY", GameName = "Assassin's Creed Odyssey", DefaultSaveMode = SaveMode.SymlinkOrJunction, EmulatorConfig = new EmulatorConfig { PlatformName = "PC", TitleId = "ACOD", ExecutablePath = "C:/Games/ACOdyssey/ACOdyssey.exe", SaveRootPath = "C:/Saves/ACOdyssey" } });
+        Games.Add(new GameConfig { GameId = "FH5", GameName = "Forza Horizon 5", DefaultSaveMode = SaveMode.MoveAndSwap, EmulatorConfig = new EmulatorConfig { PlatformName = "PC", TitleId = "FH5", ExecutablePath = "C:/Games/FH5/ForzaHorizon5.exe", SaveRootPath = "C:/Saves/FH5" } });
+        Games.Add(new GameConfig { GameId = "RPCS3_BLUS30109", GameName = "Ninja Gaiden Sigma 2 (RPCS3)", DefaultSaveMode = SaveMode.CopyAndOverwrite, EmulatorConfig = new EmulatorConfig { EmulatorType = EmulatorType.RPCS3, PlatformName = "PlayStation 3", TitleId = "BLUS30109", ExecutablePath = "C:/Emulators/RPCS3/rpcs3.exe", SaveRootPath = "C:/Emulators/RPCS3/dev_hdd0/game" } });
         SelectedGame = Games[0];
+    }
+
+    private void SwitchProfileForSelectedGame()
+    {
+        if (SelectedProfile == null || SelectedGame == null) return;
+        try
+        {
+            _saveManager.SwitchActiveProfileForGame(SelectedProfile, SelectedGame, SelectedGame.DefaultSaveMode);
+        }
+        catch (Exception ex)
+        {
+            LoggerService.Instance.LogError("Failed to switch profile for game.", ex);
+        }
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+    private sealed class RelayCommand : ICommand
+    {
+        private readonly Action<object?> _execute;
+        private readonly Predicate<object?>? _canExecute;
+        public RelayCommand(Action<object?> execute, Predicate<object?>? canExecute = null) { _execute = execute; _canExecute = canExecute; }
+        public bool CanExecute(object? parameter) => _canExecute?.Invoke(parameter) ?? true;
+        public void Execute(object? parameter) => _execute(parameter);
+        public event EventHandler? CanExecuteChanged { add => CommandManager.RequerySuggested += value; remove => CommandManager.RequerySuggested -= value; }
+    }
 }

@@ -40,6 +40,7 @@
                                             <TextBlock Text="Save mode" Foreground="{StaticResource SecondaryTextBrush}" />
                                             <TextBlock Text="{Binding DefaultSaveMode}" />
                                             <TextBlock Text="{Binding EmulatorConfig.TitleId}" Margin="0,5,0,0" />
+                                            <Button Content="Switch" Command="{Binding DataContext.SwitchProfileForSelectedGameCommand, RelativeSource={RelativeSource AncestorType=Window}}" Margin="0,6,0,0" />
                                         </StackPanel>
                                     </Grid>
                                 </Border>

@@ -6,4 +6,5 @@ public sealed class EmulatorConfig
     public string ExecutablePath { get; set; } = string.Empty;
     public string PlatformName { get; set; } = string.Empty;
     public string TitleId { get; set; } = string.Empty;
+    public string SaveRootPath { get; set; } = string.Empty;
 }
