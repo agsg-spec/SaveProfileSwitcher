@@ -5,18 +5,40 @@
     <Application.Resources>
         <SolidColorBrush x:Key="AppBackgroundBrush" Color="#121214" />
         <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#1E1E24" />
+        <SolidColorBrush x:Key="CardBackgroundBrush" Color="#18181B" />
         <SolidColorBrush x:Key="PrimaryTextBrush" Color="#FFFFFF" />
-        <SolidColorBrush x:Key="SecondaryTextBrush" Color="#A0A0B0" />
+        <SolidColorBrush x:Key="SecondaryTextBrush" Color="#A1A1AA" />
+        <SolidColorBrush x:Key="SubtleTextBrush" Color="#E4E4E7" />
         <SolidColorBrush x:Key="AccentBrush" Color="#3B82F6" />
+        <SolidColorBrush x:Key="AccentHoverBrush" Color="#4B8FF8" />
+        <SolidColorBrush x:Key="AccentPressedBrush" Color="#2563EB" />
+
         <Style TargetType="Window">
             <Setter Property="Background" Value="{StaticResource AppBackgroundBrush}" />
             <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}" />
         </Style>
+
         <Style TargetType="Button">
             <Setter Property="Background" Value="{StaticResource AccentBrush}" />
             <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}" />
-            <Setter Property="Padding" Value="8,4" />
-            <Setter Property="Margin" Value="4" />
+            <Setter Property="Padding" Value="10,5" />
+            <Setter Property="Margin" Value="4,2" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}" />
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="{StaticResource PanelBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}" />
+        </Style>
+
+        <Style TargetType="ListBox">
+            <Setter Property="Background" Value="{StaticResource PanelBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}" />
         </Style>
     </Application.Resources>
 </Application>
