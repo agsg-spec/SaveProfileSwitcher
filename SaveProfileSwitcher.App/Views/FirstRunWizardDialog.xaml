@@ -1,0 +1,68 @@
+<Window x:Class="SaveProfileSwitcher.App.Views.FirstRunWizardDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Welcome - SaveProfileSwitcher Setup" Width="560" Height="620"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        Background="{StaticResource WindowBackgroundBrush}">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0">
+            <TextBlock Text="Welcome to SaveProfileSwitcher" FontSize="24" FontWeight="Bold" Foreground="{StaticResource PrimaryTextBrush}" />
+            <TextBlock Text="Let's set up your primary user account and global save preferences." Foreground="{StaticResource SecondaryTextBrush}" Margin="0,6,0,0" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <!-- Setup Form -->
+        <ScrollViewer Grid.Row="1" Margin="0,20,0,16" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <GroupBox Header="1. Primary User Profile" Margin="0,0,0,14">
+                    <StackPanel Margin="10">
+                        <Label Content="Display Name *" />
+                        <TextBox x:Name="DisplayNameTextBox" Text="Player 1" TextChanged="ValidationChanged" Margin="0,4,0,10" />
+
+                        <Label Content="Avatar Image (Optional)" />
+                        <Grid Margin="0,4,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="AvatarPathTextBox" Grid.Column="0" />
+                            <Button Grid.Column="1" Content="Browse" Click="BrowseAvatar_Click" Margin="8,0,0,0" />
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="2. Global Save Preferences" Margin="0,0,0,14">
+                    <StackPanel Margin="10">
+                        <Label Content="Default Save Management Mode" />
+                        <ComboBox x:Name="SaveModeComboBox" SelectedIndex="0" Margin="0,4,0,10">
+                            <ComboBoxItem Content="Symbolic Link / Junction (Fast &amp; Recommended)" />
+                            <ComboBoxItem Content="Physical Move &amp; Swap (Safe Staging)" />
+                            <ComboBoxItem Content="Copy &amp; Overwrite (Full Duplicate)" />
+                        </ComboBox>
+
+                        <Label Content="Default Zip Backups Retention" />
+                        <Grid Margin="0,4,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="50" />
+                            </Grid.ColumnDefinitions>
+                            <Slider x:Name="RetentionSlider" Minimum="1" Maximum="20" Value="3" TickFrequency="1" IsSnapToTickEnabled="True" ValueChanged="RetentionSlider_ValueChanged" />
+                            <TextBlock x:Name="RetentionValueTextBlock" Grid.Column="1" Text="3" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" />
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer Buttons -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="GetStartedButton" Content="Get Started" Padding="20,8" FontWeight="SemiBold" IsDefault="True" Click="GetStarted_Click" />
+        </StackPanel>
+    </Grid>
+</Window>
