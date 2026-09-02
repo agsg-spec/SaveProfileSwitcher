@@ -1,24 +1,10 @@
-using System.Windows;
-
+using System; using System.IO; using System.Windows; using Microsoft.Win32; using SaveProfileSwitcher.App.Models;
 namespace SaveProfileSwitcher.App.Views;
-
 public partial class AddProfileDialog : Window
 {
-    public AddProfileDialog()
-    {
-        InitializeComponent();
-    }
-
-    private void Create_Click(object sender, RoutedEventArgs e)
-    {
-        var name = DisplayNameTextBox.Text.Trim();
-        if (string.IsNullOrEmpty(name))
-        {
-            MessageBox.Show("Please enter a display name.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
-            return;
-        }
-
-        // In a real app, create the profile here and add to the collection.
-        DialogResult = true;
-    }
+    public UserProfile CreatedProfile { get; private set; } = new();
+    public AddProfileDialog() { InitializeComponent(); }
+    private void DisplayNameTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) => CreateButton.IsEnabled = !string.IsNullOrWhiteSpace(DisplayNameTextBox.Text);
+    private void BrowseAvatar_Click(object sender, RoutedEventArgs e) { var dialog = new OpenFileDialog { Filter = "Image Files|*.png;*.jpg;*.jpeg;*.webp;*.ico|All Files|*.*" }; if (dialog.ShowDialog(this) == true) AvatarPathTextBox.Text = dialog.FileName; }
+    private void Create_Click(object sender, RoutedEventArgs e) { Guid id = Guid.NewGuid(); CreatedProfile = new UserProfile { Id = id, DisplayName = DisplayNameTextBox.Text.Trim(), AvatarPath = string.IsNullOrWhiteSpace(AvatarPathTextBox.Text) ? null : AvatarPathTextBox.Text.Trim(), StorageRootPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SaveProfileSwitcher", "Profiles", id.ToString()) }; DialogResult = true; }
 }
